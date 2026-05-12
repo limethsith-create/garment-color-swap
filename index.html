@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Garment Color Swap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #0a0a0a; color: #e0e0e0; min-height: 100vh; }
+    .header { text-align: center; padding: 28px 20px 18px; border-bottom: 1px solid #1a1a1a; }
+    .header h1 { font-size: 28px; font-weight: 700; background: linear-gradient(135deg, #a78bfa, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .header p { font-size: 14px; color: #666; margin-top: 6px; }
+    .main { display: flex; gap: 24px; padding: 24px; max-width: 1400px; margin: 0 auto; align-items: flex-start; }
+    @media (max-width: 900px) { .main { flex-direction: column; } .panel { width: 100% !important; } }
+    .canvas-area { flex: 1 1 700px; min-width: 0; }
+    .drop-zone { border: 2px dashed #333; border-radius: 16px; padding: 80px 40px; text-align: center; cursor: pointer; transition: all 0.25s; background: #111; }
+    .drop-zone:hover, .drop-zone.active { border-color: #a78bfa; background: #15112a; }
+    .drop-zone .icon { font-size: 56px; margin-bottom: 16px; }
+    .drop-zone .text { font-size: 20px; font-weight: 600; color: #ccc; }
+    .drop-zone .sub { font-size: 14px; color: #555; margin-top: 8px; }
+    .canvas-wrap { background: #111; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; align-items: center; }
+    #canvas { max-width: 100%; cursor: crosshair; border-radius: 8px; display: block; }
+    .canvas-hint { font-size: 13px; color: #555; margin-top: 10px; }
+    .panel { width: 320px; flex-shrink: 0; background: #111; border-radius: 16px; padding: 24px; display: none; flex-direction: column; gap: 22px; }
+    .panel.visible { display: flex; }
+    .section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: #666; margin-bottom: 8px; }
+    .color-row { display: flex; align-items: center; gap: 12px; }
+    .swatch { width: 42px; height: 42px; border-radius: 10px; border: 2px solid #2a2a2a; flex-shrink: 0; }
+    .color-label { font-size: 14px; color: #999; font-family: 'SF Mono', 'Fira Code', monospace; }
+    .hint-text { font-size: 14px; color: #444; font-style: italic; }
+    input[type="range"] { width: 100%; accent-color: #a78bfa; margin: 4px 0; }
+    .slider-labels { display: flex; justify-content: space-between; font-size: 11px; color: #444; }
+    input[type="color"] { width: 50px; height: 42px; border: none; border-radius: 8px; cursor: pointer; background: transparent; padding: 0; }
+    .presets { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .preset { width: 30px; height: 30px; border-radius: 8px; border: 2px solid #333; cursor: pointer; transition: transform 0.15s, border-color 0.15s; padding: 0; }
+    .preset:hover { transform: scale(1.15); }
+    .preset.active { border-color: #fff; }
+    .btn { padding: 12px 20px; border-radius: 10px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+    .btn-primary { background: #a78bfa; color: #fff; }
+    .btn-primary:hover { background: #9474f0; }
+    .btn-secondary { background: transparent; border: 1px solid #2a2a2a; color: #999; }
+    .btn-secondary:hover { border-color: #555; color: #ccc; }
+    .history-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+    .history-dot { width: 24px; height: 24px; border-radius: 6px; border: 1px solid #333; }
+    .history-arrow { color: #444; font-size: 16px; }
+    .actions { display: flex; flex-direction: column; gap: 10px; }
+    .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 100; }
+    .loading-overlay.visible { display: flex; }
+    .loading-text { color: #a78bfa; font-size: 18px; font-weight: 600; }
+  </style>
+</head>
+<body>
+<div class="loading-overlay" id="loading"><span class="loading-text">Swapping colors...</span></div>
+<header class="header"><h1>Garment Color Swap</h1><p>Upload a garment photo &middot; Click any color &middot; Swap instantly</p></header>
+<div class="main">
+  <div class="canvas-area">
+    <div class="drop-zone" id="dropZone"><div class="icon">&#128247;</div><p class="text">Drop a garment photo here</p><p class="sub">or click to browse &mdash; JPG, PNG, WebP</p><input type="file" id="fileInput" accept="image/*" style="display:none"></div>
+    <div class="canvas-wrap" id="canvasWrap" style="display:none"><canvas id="canvas"></canvas><p class="canvas-hint">Click anywhere on the garment to select a color region</p></div>
+  </div>
+  <div class="panel" id="panel">
+    <div><div class="section-title">Selected Color</div><div id="colorInfo"><p class="hint-text">Click on the image to pick a color</p></div></div>
+    <div><div class="section-title">Tolerance: <span id="tolValue">40</span></div><input type="range" id="tolerance" min="5" max="120" value="40"><div class="slider-labels"><span>Precise</span><span>Broad</span></div></div>
+    <button class="btn btn-secondary" id="previewBtn" style="display:none">Preview Selection</button>
+    <div id="newColorSection" style="display:none"><div class="section-title">New Color</div><div class="color-row"><input type="color" id="colorPicker" value="#ff0000"><span class="color-label" id="hexLabel">#FF0000</span></div><div class="presets" id="presets"></div></div>
+    <button class="btn btn-primary" id="applyBtn" style="display:none">Apply Color Swap</button>
+    <div id="historySection" style="display:none"><div class="section-title">Swap History</div><div id="historyList"></div></div>
+    <div class="actions"><button class="btn btn-primary" id="exportBtn">Export Image</button><button class="btn btn-secondary" id="resetBtn">Reset to Original</button><button class="btn btn-secondary" id="newImageBtn">Upload New Image</button></div>
+  </div>
+</div>
+<script>
+function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b);let h,s,l=(max+min)/2;if(max===min){h=s=0}else{const d=max-min;s=l>0.5?d/(2-max-min):d/(max+min);switch(max){case r:h=((g-b)/d+(g<b?6:0))/6;break;case g:h=((b-r)/d+2)/6;break;case b:h=((r-g)/d+4)/6;break}}return[h*360,s*100,l*100]}
+function hslToRgb(h,s,l){h/=360;s/=100;l/=100;let r,g,b2;if(s===0){r=g=b2=l}else{const hue2rgb=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p};const q=l<0.5?l*(1+s):l+s-l*s;const p=2*l-q;r=hue2rgb(p,q,h+1/3);g=hue2rgb(p,q,h);b2=hue2rgb(p,q,h-1/3)}return[Math.round(r*255),Math.round(g*255),Math.round(b2*255)]}
+function colorDistance(r1,g1,b1,r2,g2,b2){const rm=(r1+r2)/2;const dr=r1-r2,dg=g1-g2,db=b1-b2;return Math.sqrt((2+rm/256)*dr*dr+4*dg*dg+(2+(255-rm)/256)*db*db)}
+let originalData=null,currentData=null,selectedColor=null,previewing=false;const swapHistory=[];
+const PRESETS=['#000000','#FFFFFF','#FF0000','#00AA00','#0066FF','#FFD700','#FF69B4','#800080','#FF8C00','#008080','#8B4513','#C0C0C0','#000080','#2F4F4F','#DC143C','#228B22'];
+const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d',{willReadFrequently:true}),dropZone=document.getElementById('dropZone'),fileInput=document.getElementById('fileInput'),canvasWrap=document.getElementById('canvasWrap'),panel=document.getElementById('panel'),colorInfo=document.getElementById('colorInfo'),tolSlider=document.getElementById('tolerance'),tolValue=document.getElementById('tolValue'),previewBtn=document.getElementById('previewBtn'),newColorSec=document.getElementById('newColorSection'),colorPicker=document.getElementById('colorPicker'),hexLabel=document.getElementById('hexLabel'),applyBtn=document.getElementById('applyBtn'),histSec=document.getElementById('historySection'),histList=document.getElementById('historyList'),exportBtn=document.getElementById('exportBtn'),resetBtn=document.getElementById('resetBtn'),newImgBtn=document.getElementById('newImageBtn'),loading=document.getElementById('loading'),presetsEl=document.getElementById('presets');
+PRESETS.forEach(c=>{const btn=document.createElement('button');btn.className='preset';btn.style.backgroundColor=c;btn.addEventListener('click',()=>{colorPicker.value=c;hexLabel.textContent=c.toUpperCase();document.querySelectorAll('.preset').forEach(b=>b.classList.remove('active'));btn.classList.add('active')});presetsEl.appendChild(btn)});
+function loadImage(file){const reader=new FileReader();reader.onload=e=>{const img=new Image();img.onload=()=>{let w=img.width,h=img.height;const maxW=1200,maxH=900;if(w>maxW){h=h*(maxW/w);w=maxW}if(h>maxH){w=w*(maxH/h);h=maxH}w=Math.round(w);h=Math.round(h);canvas.width=w;canvas.height=h;ctx.drawImage(img,0,0,w,h);const imgData=ctx.getImageData(0,0,w,h);originalData=new Uint8ClampedArray(imgData.data);currentData=new Uint8ClampedArray(imgData.data);dropZone.style.display='none';canvasWrap.style.display='flex';panel.classList.add('visible');selectedColor=null;previewing=false;swapHistory.length=0;histList.innerHTML='';histSec.style.display='none';updateColorUI()};img.src=e.target.result};reader.readAsDataURL(file)}
+dropZone.addEventListener('click',()=>fileInput.click());dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('active')});dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('active'));dropZone.addEventListener('drop',e=>{e.preventDefault();dropZone.classList.remove('active');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))loadImage(f)});fileInput.addEventListener('change',e=>{if(e.target.files[0])loadImage(e.target.files[0])});
+canvas.addEventListener('click',e=>{const rect=canvas.getBoundingClientRect();const sx=canvas.width/rect.width;const sy=canvas.height/rect.height;const x=Math.floor((e.clientX-rect.left)*sx);const y=Math.floor((e.clientY-rect.top)*sy);const px=ctx.getImageData(x,y,1,1).data;selectedColor={r:px[0],g:px[1],b:px[2]};previewing=false;const imgData=ctx.createImageData(canvas.width,canvas.height);imgData.data.set(currentData);ctx.putImageData(imgData,0,0);updateColorUI()});
+function updateColorUI(){if(!selectedColor){colorInfo.innerHTML='<p class="hint-text">Click on the image to pick a color</p>';previewBtn.style.display='none';newColorSec.style.display='none';applyBtn.style.display='none';return}const{r,g,b}=selectedColor;colorInfo.innerHTML='<div class="color-row"><div class="swatch" style="background:rgb('+r+','+g+','+b+')"></div><span class="color-label">RGB('+r+', '+g+', '+b+')</span></div>';previewBtn.style.display='block';previewBtn.textContent='Preview Selection';newColorSec.style.display='block';applyBtn.style.display='block'}
+tolSlider.addEventListener('input',()=>{tolValue.textContent=tolSlider.value});
+previewBtn.addEventListener('click',()=>{if(!selectedColor)return;if(previewing){const imgData=ctx.createImageData(canvas.width,canvas.height);imgData.data.set(currentData);ctx.putImageData(imgData,0,0);previewing=false;previewBtn.textContent='Preview Selection'}else{const tol=Number(tolSlider.value);const imgData=ctx.getImageData(0,0,canvas.width,canvas.height);const d=imgData.data;for(let i=0;i<d.length;i+=4){const dist=colorDistance(d[i],d[i+1],d[i+2],selectedColor.r,selectedColor.g,selectedColor.b);if(dist>tol){d[i]=Math.round(d[i]*0.25);d[i+1]=Math.round(d[i+1]*0.25);d[i+2]=Math.round(d[i+2]*0.25)}}ctx.putImageData(imgData,0,0);previewing=true;previewBtn.textContent='Hide Preview'}});
+colorPicker.addEventListener('input',e=>{hexLabel.textContent=e.target.value.toUpperCase();document.querySelectorAll('.preset').forEach(b=>b.classList.remove('active'))});
+applyBtn.addEventListener('click',()=>{if(!selectedColor)return;loading.classList.add('visible');requestAnimationFrame(()=>{setTimeout(()=>{const tol=Number(tolSlider.value);const hex=colorPicker.value;const nr=parseInt(hex.slice(1,3),16);const ng=parseInt(hex.slice(3,5),16);const nb=parseInt(hex.slice(5,7),16);const[newH,newS]=rgbToHsl(nr,ng,nb);const[origH,origS]=rgbToHsl(selectedColor.r,selectedColor.g,selectedColor.b);const hueShift=newH-origH;const satShift=newS-origS;const imgData=ctx.createImageData(canvas.width,canvas.height);imgData.data.set(currentData);const d=imgData.data;let count=0;for(let i=0;i<d.length;i+=4){const dist=colorDistance(d[i],d[i+1],d[i+2],selectedColor.r,selectedColor.g,selectedColor.b);if(dist<=tol){const[h,s,l]=rgbToHsl(d[i],d[i+1],d[i+2]);let nh=(h+hueShift)%360;if(nh<0)nh+=360;let ns=Math.max(0,Math.min(100,s+satShift));const[rr,gg,bb]=hslToRgb(nh,ns,l);d[i]=rr;d[i+1]=gg;d[i+2]=bb;count++}}ctx.putImageData(imgData,0,0);currentData=new Uint8ClampedArray(d);const from='rgb('+selectedColor.r+','+selectedColor.g+','+selectedColor.b+')';swapHistory.push({from,to:hex});const item=document.createElement('div');item.className='history-item';item.innerHTML='<div class="history-dot" style="background:'+from+'"></div><span class="history-arrow">&rarr;</span><div class="history-dot" style="background:'+hex+'"></div>';histList.appendChild(item);histSec.style.display='block';selectedColor=null;previewing=false;updateColorUI();loading.classList.remove('visible')},50)})});
+exportBtn.addEventListener('click',()=>{const link=document.createElement('a');link.download='garment-recolored.png';link.href=canvas.toDataURL('image/png');link.click()});
+resetBtn.addEventListener('click',()=>{if(!originalData)return;const imgData=ctx.createImageData(canvas.width,canvas.height);imgData.data.set(originalData);ctx.putImageData(imgData,0,0);currentData=new Uint8ClampedArray(originalData);selectedColor=null;previewing=false;swapHistory.length=0;histList.innerHTML='';histSec.style.display='none';updateColorUI()});
+newImgBtn.addEventListener('click',()=>{dropZone.style.display='block';canvasWrap.style.display='none';panel.classList.remove('visible');originalData=null;currentData=null;selectedColor=null;previewing=false;swapHistory.length=0;histList.innerHTML='';fileInput.value=''});
+</script>
+</body>
+</html>
