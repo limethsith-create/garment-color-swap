@@ -8,94 +8,312 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #0a0a0a; color: #e0e0e0; min-height: 100vh; }
-    .header { text-align: center; padding: 28px 20px 18px; border-bottom: 1px solid #1a1a1a; }
-    .header h1 { font-size: 28px; font-weight: 700; background: linear-gradient(135deg, #a78bfa, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0a0a0a;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+    .header {
+      text-align: center;
+      padding: 28px 20px 18px;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #a78bfa, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
     .header p { font-size: 14px; color: #666; margin-top: 6px; }
-    .main { display: flex; gap: 24px; padding: 24px; max-width: 1400px; margin: 0 auto; align-items: flex-start; }
-    @media (max-width: 900px) { .main { flex-direction: column; } .panel { width: 100% !important; } }
+    .main {
+      display: flex;
+      gap: 24px;
+      padding: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+      align-items: flex-start;
+    }
+    @media (max-width: 900px) {
+      .main { flex-direction: column; }
+      .panel { width: 100% !important; }
+    }
     .canvas-area { flex: 1 1 700px; min-width: 0; }
-    .drop-zone { border: 2px dashed #333; border-radius: 16px; padding: 80px 40px; text-align: center; cursor: pointer; transition: all 0.25s; background: #111; }
-    .drop-zone:hover, .drop-zone.active { border-color: #a78bfa; background: #15112a; }
+    .drop-zone {
+      border: 2px dashed #333;
+      border-radius: 16px;
+      padding: 80px 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s;
+      background: #111;
+    }
+    .drop-zone:hover, .drop-zone.active {
+      border-color: #a78bfa;
+      background: #15112a;
+    }
     .drop-zone .icon { font-size: 56px; margin-bottom: 16px; }
     .drop-zone .text { font-size: 20px; font-weight: 600; color: #ccc; }
     .drop-zone .sub { font-size: 14px; color: #555; margin-top: 8px; }
-    .canvas-wrap { background: #111; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; align-items: center; }
-    #canvas { max-width: 100%; cursor: crosshair; border-radius: 8px; display: block; }
+    .canvas-wrap {
+      background: #111;
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #canvas {
+      max-width: 100%;
+      cursor: crosshair;
+      border-radius: 8px;
+      display: block;
+    }
     .canvas-hint { font-size: 13px; color: #555; margin-top: 10px; }
-    .panel { width: 320px; flex-shrink: 0; background: #111; border-radius: 16px; padding: 24px; display: none; flex-direction: column; gap: 22px; }
+    .panel {
+      width: 340px;
+      flex-shrink: 0;
+      background: #111;
+      border-radius: 16px;
+      padding: 24px;
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+    }
     .panel.visible { display: flex; }
-    .section-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: #666; margin-bottom: 8px; }
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #666;
+      margin-bottom: 8px;
+    }
     .color-row { display: flex; align-items: center; gap: 12px; }
-    .swatch { width: 42px; height: 42px; border-radius: 10px; border: 2px solid #2a2a2a; flex-shrink: 0; }
-    .color-label { font-size: 14px; color: #999; font-family: 'SF Mono', 'Fira Code', monospace; }
+    .swatch {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      border: 2px solid #2a2a2a;
+      flex-shrink: 0;
+    }
+    .color-label {
+      font-size: 14px;
+      color: #999;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
     .hint-text { font-size: 14px; color: #444; font-style: italic; }
-    input[type="range"] { width: 100%; accent-color: #a78bfa; margin: 4px 0; }
-    .slider-labels { display: flex; justify-content: space-between; font-size: 11px; color: #444; }
-    input[type="color"] { width: 50px; height: 42px; border: none; border-radius: 8px; cursor: pointer; background: transparent; padding: 0; }
+    input[type="range"] {
+      width: 100%;
+      accent-color: #a78bfa;
+      margin: 4px 0;
+    }
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #444;
+    }
+    input[type="color"] {
+      width: 50px;
+      height: 42px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: transparent;
+      padding: 0;
+    }
     .presets { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-    .preset { width: 30px; height: 30px; border-radius: 8px; border: 2px solid #333; cursor: pointer; transition: transform 0.15s, border-color 0.15s; padding: 0; }
+    .preset {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 2px solid #333;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s;
+      padding: 0;
+    }
     .preset:hover { transform: scale(1.15); }
     .preset.active { border-color: #fff; }
-    .btn { padding: 12px 20px; border-radius: 10px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit; width: 100%; }
+    .btn {
+      padding: 12px 20px;
+      border-radius: 10px;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
     .btn-primary { background: #a78bfa; color: #fff; }
     .btn-primary:hover { background: #9474f0; }
-    .btn-accent { background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; }
-    .btn-accent:hover { opacity: 0.9; }
-    .btn-secondary { background: transparent; border: 1px solid #2a2a2a; color: #999; }
+    .btn-accent {
+      background: linear-gradient(135deg, #34d399, #06b6d4);
+      color: #000;
+      font-weight: 700;
+    }
+    .btn-accent:hover { filter: brightness(1.1); }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid #2a2a2a;
+      color: #999;
+    }
     .btn-secondary:hover { border-color: #555; color: #ccc; }
     .history-item { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
-    .history-dot { width: 24px; height: 24px; border-radius: 6px; border: 1px solid #333; }
+    .history-dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 1px solid #333;
+    }
     .history-arrow { color: #444; font-size: 16px; }
     .actions { display: flex; flex-direction: column; gap: 10px; }
-    .loading-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 100; flex-direction: column; gap: 12px; }
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      flex-direction: column;
+      gap: 12px;
+    }
     .loading-overlay.visible { display: flex; }
     .loading-text { color: #a78bfa; font-size: 18px; font-weight: 600; }
-    .loading-sub { color: #888; font-size: 13px; }
-    .artwork-badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-    .badge-on { background: #166534; color: #4ade80; }
-    .badge-off { background: #7f1d1d; color: #fca5a5; }
-    .mode-toggle { display: flex; gap: 8px; align-items: center; }
-    .mode-toggle label { font-size: 13px; color: #999; cursor: pointer; }
+    .loading-bar {
+      width: 200px;
+      height: 4px;
+      background: #222;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .loading-bar-inner {
+      height: 100%;
+      background: linear-gradient(90deg, #a78bfa, #60a5fa);
+      border-radius: 4px;
+      transition: width 0.3s;
+      width: 0%;
+    }
+    .mode-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .mode-photo { background: #7f1d1d; color: #fca5a5; }
+    .mode-artwork { background: #064e3b; color: #6ee7b7; }
+    .palette-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 8px;
+    }
+    .palette-chip {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: 1px solid #333;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .palette-chip:hover { transform: scale(1.2); }
+    .divider {
+      height: 1px;
+      background: #1a1a1a;
+      margin: 2px 0;
+    }
   </style>
 </head>
 <body>
-<div class="loading-overlay" id="loading"><span class="loading-text" id="loadingText">Processing...</span><span class="loading-sub" id="loadingSub"></span></div>
-<header class="header"><h1>Garment Color Swap</h1><p>Upload a garment photo &middot; Convert to artwork &middot; Swap colors cleanly</p></header>
+
+<div class="loading-overlay" id="loading">
+  <span class="loading-text" id="loadingText">Processing...</span>
+  <div class="loading-bar"><div class="loading-bar-inner" id="loadingBar"></div></div>
+</div>
+
+<header class="header">
+  <h1>Garment Color Swap</h1>
+  <p>Upload a garment photo &middot; Convert to artwork &middot; Swap colors cleanly</p>
+</header>
+
 <div class="main">
   <div class="canvas-area">
-    <div class="drop-zone" id="dropZone"><div class="icon">&#128247;</div><p class="text">Drop a garment photo here</p><p class="sub">or click to browse &mdash; JPG, PNG, WebP</p><input type="file" id="fileInput" accept="image/*" style="display:none"></div>
-    <div class="canvas-wrap" id="canvasWrap" style="display:none"><canvas id="canvas"></canvas><p class="canvas-hint" id="canvasHint">Step 1: Convert to artwork for clean color regions</p></div>
-  </div>
-  <div class="panel" id="panel">
-    <div>
-      <div class="section-title">Artwork Mode</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <span id="artworkBadge" class="artwork-badge badge-off">Photo Mode</span>
-      </div>
-      <div><div class="section-title" style="margin-top:4px">Color Levels: <span id="levelValue">10</span></div>
-      <input type="range" id="levels" min="3" max="24" value="10">
-      <div class="slider-labels"><span>Fewer colors</span><span>More colors</span></div></div>
-      <button class="btn btn-accent" id="artworkBtn" style="margin-top:8px">Convert to Artwork</button>
+    <div class="drop-zone" id="dropZone">
+      <div class="icon">&#128247;</div>
+      <p class="text">Drop a garment photo here</p>
+      <p class="sub">or click to browse &mdash; JPG, PNG, WebP</p>
+      <input type="file" id="fileInput" accept="image/*" style="display:none">
     </div>
-    <hr style="border:0;border-top:1px solid #222">
+    <div class="canvas-wrap" id="canvasWrap" style="display:none">
+      <canvas id="canvas"></canvas>
+      <p class="canvas-hint" id="canvasHint">Step 1: Convert to artwork first, then click a color to swap</p>
+    </div>
+  </div>
+
+  <div class="panel" id="panel">
+    <!-- Mode Badge -->
+    <div style="text-align:center">
+      <span class="mode-badge mode-photo" id="modeBadge">Photo Mode</span>
+    </div>
+
+    <!-- Artwork Conversion -->
+    <div id="artworkSection">
+      <div class="section-title">Artwork Conversion</div>
+      <div>
+        <label style="font-size:13px;color:#888">Color Levels: <span id="levelValue">8</span></label>
+        <input type="range" id="levelSlider" min="4" max="20" value="8">
+        <div class="slider-labels"><span>Fewer (flat)</span><span>More (detailed)</span></div>
+      </div>
+      <div style="margin-top:4px">
+        <label style="font-size:13px;color:#888">Smoothing: <span id="smoothValue">3</span></label>
+        <input type="range" id="smoothSlider" min="1" max="5" value="3">
+        <div class="slider-labels"><span>Light</span><span>Heavy</span></div>
+      </div>
+      <button class="btn btn-accent" id="artworkBtn" style="margin-top:6px">Convert to Artwork</button>
+      <div id="palettePreview"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Selected Color -->
     <div>
       <div class="section-title">Selected Color</div>
-      <div id="colorInfo"><p class="hint-text">Convert to artwork first, then click a color</p></div>
+      <div id="colorInfo">
+        <p class="hint-text">Click on the image to pick a color</p>
+      </div>
     </div>
+
+    <!-- Tolerance -->
     <div>
-      <div class="section-title">Tolerance: <span id="tolValue">30</span></div>
-      <input type="range" id="tolerance" min="5" max="120" value="30">
+      <div class="section-title">Tolerance: <span id="tolValue">40</span></div>
+      <input type="range" id="tolerance" min="5" max="120" value="40">
       <div class="slider-labels"><span>Precise</span><span>Broad</span></div>
     </div>
+
     <button class="btn btn-secondary" id="previewBtn" style="display:none">Preview Selection</button>
+
+    <!-- New Color -->
     <div id="newColorSection" style="display:none">
       <div class="section-title">New Color</div>
-      <div class="color-row"><input type="color" id="colorPicker" value="#ff0000"><span class="color-label" id="hexLabel">#FF0000</span></div>
+      <div class="color-row">
+        <input type="color" id="colorPicker" value="#ff0000">
+        <span class="color-label" id="hexLabel">#FF0000</span>
+      </div>
       <div class="presets" id="presets"></div>
     </div>
+
     <button class="btn btn-primary" id="applyBtn" style="display:none">Apply Color Swap</button>
-    <div id="historySection" style="display:none"><div class="section-title">Swap History</div><div id="historyList"></div></div>
+
+    <!-- History -->
+    <div id="historySection" style="display:none">
+      <div class="section-title">Swap History</div>
+      <div id="historyList"></div>
+    </div>
+
     <div class="actions">
       <button class="btn btn-primary" id="exportBtn">Export Image</button>
       <button class="btn btn-secondary" id="resetBtn">Reset to Original</button>
@@ -103,129 +321,562 @@
     </div>
   </div>
 </div>
+
 <script>
-function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b);let h,s,l=(max+min)/2;if(max===min){h=s=0}else{const d=max-min;s=l>0.5?d/(2-max-min):d/(max+min);switch(max){case r:h=((g-b)/d+(g<b?6:0))/6;break;case g:h=((b-r)/d+2)/6;break;case b:h=((r-g)/d+4)/6;break}}return[h*360,s*100,l*100]}
-function hslToRgb(h,s,l){h/=360;s/=100;l/=100;let r,g,b2;if(s===0){r=g=b2=l}else{const hue2rgb=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p};const q=l<0.5?l*(1+s):l+s-l*s;const p=2*l-q;r=hue2rgb(p,q,h+1/3);g=hue2rgb(p,q,h);b2=hue2rgb(p,q,h-1/3)}return[Math.round(r*255),Math.round(g*255),Math.round(b2*255)]}
-function colorDistance(r1,g1,b1,r2,g2,b2){const rm=(r1+r2)/2;const dr=r1-r2,dg=g1-g2,db=b1-b2;return Math.sqrt((2+rm/256)*dr*dr+4*dg*dg+(2+(255-rm)/256)*db*db)}
-
-// Median-cut color quantization
-function quantizeColors(imageData, numColors) {
-  const data = imageData.data;
-  const pixels = [];
-  for (let i = 0; i < data.length; i += 4) {
-    if (data[i+3] > 128) pixels.push([data[i], data[i+1], data[i+2]]);
-  }
-  function getRange(bucket) {
-    let rMin=255,rMax=0,gMin=255,gMax=0,bMin=255,bMax=0;
-    for (const p of bucket) {
-      if(p[0]<rMin)rMin=p[0];if(p[0]>rMax)rMax=p[0];
-      if(p[1]<gMin)gMin=p[1];if(p[1]>gMax)gMax=p[1];
-      if(p[2]<bMin)bMin=p[2];if(p[2]>bMax)bMax=p[2];
+// ─── Color Utilities ─────────────────────────────────────────────
+function rgbToHsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h, s, l = (max + min) / 2;
+  if (max === min) { h = s = 0; }
+  else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+      case g: h = ((b - r) / d + 2) / 6; break;
+      case b: h = ((r - g) / d + 4) / 6; break;
     }
-    return {rRange:rMax-rMin, gRange:gMax-gMin, bRange:bMax-bMin};
   }
-  function splitBucket(bucket) {
-    const range = getRange(bucket);
-    let ch = 0;
-    if (range.gRange >= range.rRange && range.gRange >= range.bRange) ch = 1;
-    else if (range.bRange >= range.rRange && range.bRange >= range.gRange) ch = 2;
-    bucket.sort((a, b) => a[ch] - b[ch]);
-    const mid = Math.floor(bucket.length / 2);
-    return [bucket.slice(0, mid), bucket.slice(mid)];
-  }
-  let buckets = [pixels];
-  while (buckets.length < numColors) {
-    let maxIdx = 0, maxLen = 0;
-    for (let i = 0; i < buckets.length; i++) {
-      if (buckets[i].length > maxLen) { maxLen = buckets[i].length; maxIdx = i; }
-    }
-    if (maxLen < 2) break;
-    const [a, b] = splitBucket(buckets[maxIdx]);
-    buckets.splice(maxIdx, 1, a, b);
-  }
-  const palette = buckets.map(bucket => {
-    let rSum=0,gSum=0,bSum=0;
-    for (const p of bucket) { rSum+=p[0]; gSum+=p[1]; bSum+=p[2]; }
-    const n = bucket.length || 1;
-    return [Math.round(rSum/n), Math.round(gSum/n), Math.round(bSum/n)];
-  });
-  return palette;
+  return [h * 360, s * 100, l * 100];
 }
 
-function applyPalette(imageData, palette) {
-  const data = imageData.data;
-  for (let i = 0; i < data.length; i += 4) {
-    let bestDist = Infinity, bestIdx = 0;
-    for (let j = 0; j < palette.length; j++) {
-      const dist = colorDistance(data[i], data[i+1], data[i+2], palette[j][0], palette[j][1], palette[j][2]);
-      if (dist < bestDist) { bestDist = dist; bestIdx = j; }
-    }
-    data[i] = palette[bestIdx][0];
-    data[i+1] = palette[bestIdx][1];
-    data[i+2] = palette[bestIdx][2];
+function hslToRgb(h, s, l) {
+  h /= 360; s /= 100; l /= 100;
+  let r, g, b2;
+  if (s === 0) { r = g = b2 = l; }
+  else {
+    const hue2rgb = (p, q, t) => {
+      if (t < 0) t += 1; if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q - p) * 6 * t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      return p;
+    };
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r = hue2rgb(p, q, h + 1/3);
+    g = hue2rgb(p, q, h);
+    b2 = hue2rgb(p, q, h - 1/3);
   }
-  return imageData;
+  return [Math.round(r * 255), Math.round(g * 255), Math.round(b2 * 255)];
 }
 
-let originalData=null,currentData=null,artworkData=null,selectedColor=null,previewing=false,isArtwork=false;
-const swapHistory=[];
-const PRESETS=['#000000','#FFFFFF','#FF0000','#00AA00','#0066FF','#FFD700','#FF69B4','#800080','#FF8C00','#008080','#8B4513','#C0C0C0','#000080','#2F4F4F','#DC143C','#228B22'];
-const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d',{willReadFrequently:true}),dropZone=document.getElementById('dropZone'),fileInput=document.getElementById('fileInput'),canvasWrap=document.getElementById('canvasWrap'),panel=document.getElementById('panel'),colorInfo=document.getElementById('colorInfo'),tolSlider=document.getElementById('tolerance'),tolValue=document.getElementById('tolValue'),previewBtn=document.getElementById('previewBtn'),newColorSec=document.getElementById('newColorSection'),colorPicker=document.getElementById('colorPicker'),hexLabel=document.getElementById('hexLabel'),applyBtn=document.getElementById('applyBtn'),histSec=document.getElementById('historySection'),histList=document.getElementById('historyList'),exportBtn=document.getElementById('exportBtn'),resetBtn=document.getElementById('resetBtn'),newImgBtn=document.getElementById('newImageBtn'),loading=document.getElementById('loading'),loadingText=document.getElementById('loadingText'),loadingSub=document.getElementById('loadingSub'),presetsEl=document.getElementById('presets'),artworkBtn=document.getElementById('artworkBtn'),artworkBadge=document.getElementById('artworkBadge'),levelsSlider=document.getElementById('levels'),levelValue=document.getElementById('levelValue'),canvasHint=document.getElementById('canvasHint');
+function colorDistance(r1, g1, b1, r2, g2, b2) {
+  const rm = (r1 + r2) / 2;
+  const dr = r1 - r2, dg = g1 - g2, db = b1 - b2;
+  return Math.sqrt((2 + rm/256) * dr*dr + 4 * dg*dg + (2 + (255 - rm)/256) * db*db);
+}
 
-PRESETS.forEach(c=>{const btn=document.createElement('button');btn.className='preset';btn.style.backgroundColor=c;btn.addEventListener('click',()=>{colorPicker.value=c;hexLabel.textContent=c.toUpperCase();document.querySelectorAll('.preset').forEach(b=>b.classList.remove('active'));btn.classList.add('active')});presetsEl.appendChild(btn)});
+// ─── K-Means Color Quantization ──────────────────────────────────
+function kMeansQuantize(pixels, k, maxIter = 12) {
+  // pixels = array of [r,g,b]
+  // Smart init: pick spread-out starting centroids (k-means++)
+  const centroids = [];
+  const n = pixels.length;
 
-function showLoading(text, sub) { loadingText.textContent=text; loadingSub.textContent=sub||''; loading.classList.add('visible'); }
+  // First centroid: random
+  centroids.push([...pixels[Math.floor(Math.random() * n)]]);
+
+  // Subsequent centroids: weighted by distance to nearest existing centroid
+  for (let c = 1; c < k; c++) {
+    let maxDist = -1, bestIdx = 0;
+    for (let i = 0; i < n; i += 3) { // sample every 3rd for speed
+      let minD = Infinity;
+      for (const cen of centroids) {
+        const d = (pixels[i][0]-cen[0])**2 + (pixels[i][1]-cen[1])**2 + (pixels[i][2]-cen[2])**2;
+        if (d < minD) minD = d;
+      }
+      if (minD > maxDist) { maxDist = minD; bestIdx = i; }
+    }
+    centroids.push([...pixels[bestIdx]]);
+  }
+
+  const assignments = new Uint8Array(n);
+
+  for (let iter = 0; iter < maxIter; iter++) {
+    // Assign each pixel to nearest centroid
+    let changed = 0;
+    for (let i = 0; i < n; i++) {
+      let minD = Infinity, best = 0;
+      for (let c = 0; c < k; c++) {
+        const dr = pixels[i][0] - centroids[c][0];
+        const dg = pixels[i][1] - centroids[c][1];
+        const db = pixels[i][2] - centroids[c][2];
+        const d = dr*dr + dg*dg + db*db;
+        if (d < minD) { minD = d; best = c; }
+      }
+      if (assignments[i] !== best) { changed++; assignments[i] = best; }
+    }
+
+    // Recompute centroids
+    const sums = Array.from({length: k}, () => [0,0,0,0]); // r,g,b,count
+    for (let i = 0; i < n; i++) {
+      const c = assignments[i];
+      sums[c][0] += pixels[i][0];
+      sums[c][1] += pixels[i][1];
+      sums[c][2] += pixels[i][2];
+      sums[c][3]++;
+    }
+    for (let c = 0; c < k; c++) {
+      if (sums[c][3] > 0) {
+        centroids[c][0] = Math.round(sums[c][0] / sums[c][3]);
+        centroids[c][1] = Math.round(sums[c][1] / sums[c][3]);
+        centroids[c][2] = Math.round(sums[c][2] / sums[c][3]);
+      }
+    }
+
+    if (changed < n * 0.001) break; // converged
+  }
+
+  return { centroids, assignments };
+}
+
+// ─── Spatial Smoothing (Mode Filter) ────────────────────────────
+// Replaces each pixel's cluster assignment with the most common
+// assignment in its neighborhood. This eliminates isolated noisy pixels.
+function spatialSmooth(assignments, w, h, radius) {
+  const out = new Uint8Array(assignments.length);
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const counts = {};
+      for (let dy = -radius; dy <= radius; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+          const ny = y + dy, nx = x + dx;
+          if (ny >= 0 && ny < h && nx >= 0 && nx < w) {
+            const c = assignments[ny * w + nx];
+            counts[c] = (counts[c] || 0) + 1;
+          }
+        }
+      }
+      let best = assignments[y * w + x], bestCount = 0;
+      for (const c in counts) {
+        if (counts[c] > bestCount) { bestCount = counts[c]; best = Number(c); }
+      }
+      out[y * w + x] = best;
+    }
+  }
+  return out;
+}
+
+// ─── Convert to Artwork ──────────────────────────────────────────
+function convertToArtwork(imageData, numColors, smoothPasses) {
+  const w = imageData.width, h = imageData.height;
+  const d = imageData.data;
+  const totalPixels = w * h;
+
+  // Sample pixels (use all for small images, sample for large)
+  const sampleRate = totalPixels > 200000 ? Math.ceil(totalPixels / 80000) : 1;
+  const sampledPixels = [];
+  const allPixels = [];
+
+  for (let i = 0; i < totalPixels; i++) {
+    const idx = i * 4;
+    const px = [d[idx], d[idx+1], d[idx+2]];
+    allPixels.push(px);
+    if (i % sampleRate === 0) sampledPixels.push(px);
+  }
+
+  // Run k-means on sampled pixels to find palette
+  const { centroids } = kMeansQuantize(sampledPixels, numColors, 15);
+
+  // Assign ALL pixels to nearest centroid
+  let assignments = new Uint8Array(totalPixels);
+  for (let i = 0; i < totalPixels; i++) {
+    let minD = Infinity, best = 0;
+    for (let c = 0; c < centroids.length; c++) {
+      const dr = allPixels[i][0] - centroids[c][0];
+      const dg = allPixels[i][1] - centroids[c][1];
+      const db = allPixels[i][2] - centroids[c][2];
+      const dist = dr*dr + dg*dg + db*db;
+      if (dist < minD) { minD = dist; best = c; }
+    }
+    assignments[i] = best;
+  }
+
+  // Spatial smoothing passes - this is the key to clean artwork
+  const smoothRadius = 2;
+  for (let pass = 0; pass < smoothPasses; pass++) {
+    assignments = spatialSmooth(assignments, w, h, smoothRadius);
+  }
+
+  // Write result
+  const outData = new ImageData(w, h);
+  for (let i = 0; i < totalPixels; i++) {
+    const c = centroids[assignments[i]];
+    const idx = i * 4;
+    outData.data[idx]   = c[0];
+    outData.data[idx+1] = c[1];
+    outData.data[idx+2] = c[2];
+    outData.data[idx+3] = 255;
+  }
+
+  return { imageData: outData, palette: centroids };
+}
+
+// ─── State ───────────────────────────────────────────────────────
+let originalData = null;
+let currentData = null;
+let artworkData = null;
+let isArtwork = false;
+let selectedColor = null;
+let previewing = false;
+let currentPalette = null;
+const swapHistory = [];
+
+const PRESETS = ['#000000','#FFFFFF','#FF0000','#00AA00','#0066FF','#FFD700',
+                 '#FF69B4','#800080','#FF8C00','#008080','#8B4513','#C0C0C0',
+                 '#000080','#2F4F4F','#DC143C','#228B22'];
+
+// ─── DOM ─────────────────────────────────────────────────────────
+const canvas     = document.getElementById('canvas');
+const ctx        = canvas.getContext('2d', { willReadFrequently: true });
+const dropZone   = document.getElementById('dropZone');
+const fileInput  = document.getElementById('fileInput');
+const canvasWrap = document.getElementById('canvasWrap');
+const canvasHint = document.getElementById('canvasHint');
+const panel      = document.getElementById('panel');
+const colorInfo  = document.getElementById('colorInfo');
+const tolSlider  = document.getElementById('tolerance');
+const tolValue   = document.getElementById('tolValue');
+const previewBtn = document.getElementById('previewBtn');
+const newColorSec= document.getElementById('newColorSection');
+const colorPicker= document.getElementById('colorPicker');
+const hexLabel   = document.getElementById('hexLabel');
+const applyBtn   = document.getElementById('applyBtn');
+const histSec    = document.getElementById('historySection');
+const histList   = document.getElementById('historyList');
+const exportBtn  = document.getElementById('exportBtn');
+const resetBtn   = document.getElementById('resetBtn');
+const newImgBtn  = document.getElementById('newImageBtn');
+const loading    = document.getElementById('loading');
+const loadingText= document.getElementById('loadingText');
+const loadingBar = document.getElementById('loadingBar');
+const presetsEl  = document.getElementById('presets');
+const modeBadge  = document.getElementById('modeBadge');
+const artworkBtn = document.getElementById('artworkBtn');
+const levelSlider= document.getElementById('levelSlider');
+const levelValue = document.getElementById('levelValue');
+const smoothSlider=document.getElementById('smoothSlider');
+const smoothValue= document.getElementById('smoothValue');
+const palettePreview = document.getElementById('palettePreview');
+
+function showLoading(msg, pct) {
+  loadingText.textContent = msg;
+  loadingBar.style.width = (pct || 0) + '%';
+  loading.classList.add('visible');
+}
 function hideLoading() { loading.classList.remove('visible'); }
 
-function loadImage(file){const reader=new FileReader();reader.onload=e=>{const img=new Image();img.onload=()=>{let w=img.width,h=img.height;const maxW=1200,maxH=900;if(w>maxW){h=h*(maxW/w);w=maxW}if(h>maxH){w=w*(maxH/h);h=maxH}w=Math.round(w);h=Math.round(h);canvas.width=w;canvas.height=h;ctx.drawImage(img,0,0,w,h);const imgData=ctx.getImageData(0,0,w,h);originalData=new Uint8ClampedArray(imgData.data);currentData=new Uint8ClampedArray(imgData.data);artworkData=null;isArtwork=false;dropZone.style.display='none';canvasWrap.style.display='flex';panel.classList.add('visible');selectedColor=null;previewing=false;swapHistory.length=0;histList.innerHTML='';histSec.style.display='none';artworkBadge.className='artwork-badge badge-off';artworkBadge.textContent='Photo Mode';artworkBtn.textContent='Convert to Artwork';canvasHint.textContent='Step 1: Convert to artwork for clean color regions';updateColorUI()};img.src=e.target.result};reader.readAsDataURL(file)}
-
-dropZone.addEventListener('click',()=>fileInput.click());
-dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('active')});
-dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('active'));
-dropZone.addEventListener('drop',e=>{e.preventDefault();dropZone.classList.remove('active');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))loadImage(f)});
-fileInput.addEventListener('change',e=>{if(e.target.files[0])loadImage(e.target.files[0])});
-
-levelsSlider.addEventListener('input',()=>{levelValue.textContent=levelsSlider.value});
-
-// Artwork conversion
-artworkBtn.addEventListener('click',()=>{
-  if(!originalData)return;
-  showLoading('Converting to artwork...','Reducing colors for clean swapping');
-  requestAnimationFrame(()=>{setTimeout(()=>{
-    const numColors=Number(levelsSlider.value);
-    const imgData=ctx.createImageData(canvas.width,canvas.height);
-    imgData.data.set(originalData);
-    const palette=quantizeColors(imgData,numColors);
-    applyPalette(imgData,palette);
-    ctx.putImageData(imgData,0,0);
-    currentData=new Uint8ClampedArray(imgData.data);
-    artworkData=new Uint8ClampedArray(imgData.data);
-    isArtwork=true;
-    artworkBadge.className='artwork-badge badge-on';
-    artworkBadge.textContent='Artwork Mode';
-    artworkBtn.textContent='Re-convert Artwork';
-    canvasHint.textContent='Step 2: Click any color on the garment to swap it';
-    selectedColor=null;previewing=false;
-    swapHistory.length=0;histList.innerHTML='';histSec.style.display='none';
-    updateColorUI();hideLoading();
-  },50)});
+// ─── Build Preset Swatches ──────────────────────────────────────
+PRESETS.forEach(c => {
+  const btn = document.createElement('button');
+  btn.className = 'preset';
+  btn.style.backgroundColor = c;
+  btn.addEventListener('click', () => {
+    colorPicker.value = c.length === 4 ? '#' + c[1]+c[1]+c[2]+c[2]+c[3]+c[3] : c;
+    hexLabel.textContent = c.toUpperCase();
+    document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+  presetsEl.appendChild(btn);
 });
 
-canvas.addEventListener('click',e=>{const rect=canvas.getBoundingClientRect();const sx=canvas.width/rect.width;const sy=canvas.height/rect.height;const x=Math.floor((e.clientX-rect.left)*sx);const y=Math.floor((e.clientY-rect.top)*sy);const px=ctx.getImageData(x,y,1,1).data;selectedColor={r:px[0],g:px[1],b:px[2]};previewing=false;const imgData=ctx.createImageData(canvas.width,canvas.height);imgData.data.set(currentData);ctx.putImageData(imgData,0,0);updateColorUI()});
+// ─── Load Image ─────────────────────────────────────────────────
+function loadImage(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      const maxW = 1200, maxH = 900;
+      if (w > maxW) { h = h * (maxW / w); w = maxW; }
+      if (h > maxH) { w = w * (maxH / h); h = maxH; }
+      w = Math.round(w); h = Math.round(h);
+      canvas.width = w; canvas.height = h;
+      ctx.drawImage(img, 0, 0, w, h);
+      const imgData = ctx.getImageData(0, 0, w, h);
+      originalData = new Uint8ClampedArray(imgData.data);
+      currentData  = new Uint8ClampedArray(imgData.data);
+      artworkData  = null;
+      isArtwork    = false;
+      currentPalette = null;
+      dropZone.style.display = 'none';
+      canvasWrap.style.display = 'flex';
+      panel.classList.add('visible');
+      selectedColor = null;
+      previewing = false;
+      swapHistory.length = 0;
+      histList.innerHTML = '';
+      histSec.style.display = 'none';
+      modeBadge.className = 'mode-badge mode-photo';
+      modeBadge.textContent = 'Photo Mode';
+      canvasHint.textContent = 'Step 1: Convert to artwork first, then click a color to swap';
+      palettePreview.innerHTML = '';
+      updateColorUI();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
 
-function updateColorUI(){if(!selectedColor){colorInfo.innerHTML='<p class="hint-text">'+(isArtwork?'Click on the image to pick a color':'Convert to artwork first, then click a color')+'</p>';previewBtn.style.display='none';newColorSec.style.display='none';applyBtn.style.display='none';return}const{r,g,b}=selectedColor;colorInfo.innerHTML='<div class="color-row"><div class="swatch" style="background:rgb('+r+','+g+','+b+')"></div><span class="color-label">RGB('+r+', '+g+', '+b+')</span></div>';previewBtn.style.display='block';previewBtn.textContent='Preview Selection';newColorSec.style.display='block';applyBtn.style.display='block'}
+// ─── Drop / Click Upload ────────────────────────────────────────
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('active'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('active'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('active');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) loadImage(f);
+});
+fileInput.addEventListener('change', e => { if (e.target.files[0]) loadImage(e.target.files[0]); });
 
-tolSlider.addEventListener('input',()=>{tolValue.textContent=tolSlider.value});
+// ─── Artwork Conversion ─────────────────────────────────────────
+levelSlider.addEventListener('input', () => { levelValue.textContent = levelSlider.value; });
+smoothSlider.addEventListener('input', () => { smoothValue.textContent = smoothSlider.value; });
 
-previewBtn.addEventListener('click',()=>{if(!selectedColor)return;if(previewing){const imgData=ctx.createImageData(canvas.width,canvas.height);imgData.data.set(currentData);ctx.putImageData(imgData,0,0);previewing=false;previewBtn.textContent='Preview Selection'}else{const tol=Number(tolSlider.value);const imgData=ctx.getImageData(0,0,canvas.width,canvas.height);const d=imgData.data;for(let i=0;i<d.length;i+=4){const dist=colorDistance(d[i],d[i+1],d[i+2],selectedColor.r,selectedColor.g,selectedColor.b);if(dist>tol){d[i]=Math.round(d[i]*0.25);d[i+1]=Math.round(d[i+1]*0.25);d[i+2]=Math.round(d[i+2]*0.25)}}ctx.putImageData(imgData,0,0);previewing=true;previewBtn.textContent='Hide Preview'}});
+artworkBtn.addEventListener('click', () => {
+  if (!originalData) return;
+  const numColors = Number(levelSlider.value);
+  const smoothPasses = Number(smoothSlider.value);
 
-colorPicker.addEventListener('input',e=>{hexLabel.textContent=e.target.value.toUpperCase();document.querySelectorAll('.preset').forEach(b=>b.classList.remove('active'))});
+  showLoading('Converting to artwork...', 10);
 
-applyBtn.addEventListener('click',()=>{if(!selectedColor)return;showLoading('Swapping colors...','');requestAnimationFrame(()=>{setTimeout(()=>{const tol=Number(tolSlider.value);const hex=colorPicker.value;const nr=parseInt(hex.slice(1,3),16);const ng=parseInt(hex.slice(3,5),16);const nb=parseInt(hex.slice(5,7),16);const[newH,newS]=rgbToHsl(nr,ng,nb);const[origH,origS]=rgbToHsl(selectedColor.r,selectedColor.g,selectedColor.b);const hueShift=newH-origH;const satShift=newS-origS;const imgData=ctx.createImageData(canvas.width,canvas.height);imgData.data.set(currentData);const d=imgData.data;let count=0;for(let i=0;i<d.length;i+=4){const dist=colorDistance(d[i],d[i+1],d[i+2],selectedColor.r,selectedColor.g,selectedColor.b);if(dist<=tol){const[h,s,l]=rgbToHsl(d[i],d[i+1],d[i+2]);let nh=(h+hueShift)%360;if(nh<0)nh+=360;let ns=Math.max(0,Math.min(100,s+satShift));const[rr,gg,bb]=hslToRgb(nh,ns,l);d[i]=rr;d[i+1]=gg;d[i+2]=bb;count++}}ctx.putImageData(imgData,0,0);currentData=new Uint8ClampedArray(d);const from='rgb('+selectedColor.r+','+selectedColor.g+','+selectedColor.b+')';swapHistory.push({from,to:hex});const item=document.createElement('div');item.className='history-item';item.innerHTML='<div class="history-dot" style="background:'+from+'"></div><span class="history-arrow">&rarr;</span><div class="history-dot" style="background:'+hex+'"></div>';histList.appendChild(item);histSec.style.display='block';selectedColor=null;previewing=false;updateColorUI();hideLoading()},50)})});
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      loadingBar.style.width = '30%';
 
-exportBtn.addEventListener('click',()=>{const link=document.createElement('a');link.download='garment-recolored.png';link.href=canvas.toDataURL('image/png');link.click()});
-resetBtn.addEventListener('click',()=>{if(!originalData)return;if(artworkData){const imgData=ctx.createImageData(canvas.width,canvas.height);imgData.data.set(artworkData);ctx.putImageData(imgData,0,0);currentData=new Uint8ClampedArray(artworkData)}else{const imgData=ctx.createImageData(canvas.width,canvas.height);imgData.data.set(originalData);ctx.putImageData(imgData,0,0);currentData=new Uint8ClampedArray(originalData)}selectedColor=null;previewing=false;swapHistory.length=0;histList.innerHTML='';histSec.style.display='none';updateColorUI()});
-newImgBtn.addEventListener('click',()=>{dropZone.style.display='block';canvasWrap.style.display='none';panel.classList.remove('visible');originalData=null;currentData=null;artworkData=null;selectedColor=null;previewing=false;isArtwork=false;swapHistory.length=0;histList.innerHTML='';fileInput.value=''});
+      // Get current image data from the original photo
+      const srcData = new ImageData(
+        new Uint8ClampedArray(originalData),
+        canvas.width,
+        canvas.height
+      );
+
+      loadingBar.style.width = '50%';
+
+      const result = convertToArtwork(srcData, numColors, smoothPasses);
+
+      loadingBar.style.width = '85%';
+
+      // Apply to canvas
+      ctx.putImageData(result.imageData, 0, 0);
+      artworkData = new Uint8ClampedArray(result.imageData.data);
+      currentData = new Uint8ClampedArray(result.imageData.data);
+      currentPalette = result.palette;
+      isArtwork = true;
+
+      // Update UI
+      modeBadge.className = 'mode-badge mode-artwork';
+      modeBadge.textContent = 'Artwork Mode';
+      canvasHint.textContent = 'Step 2: Click on the garment to pick a color to swap';
+
+      // Show palette preview
+      palettePreview.innerHTML = '<div class="section-title" style="margin-top:8px">Detected Palette</div>';
+      const chipWrap = document.createElement('div');
+      chipWrap.className = 'palette-preview';
+      result.palette.forEach(c => {
+        const chip = document.createElement('div');
+        chip.className = 'palette-chip';
+        chip.style.background = `rgb(${c[0]},${c[1]},${c[2]})`;
+        chip.title = `RGB(${c[0]}, ${c[1]}, ${c[2]})`;
+        chip.addEventListener('click', () => {
+          selectedColor = { r: c[0], g: c[1], b: c[2] };
+          previewing = false;
+          const imgData = ctx.createImageData(canvas.width, canvas.height);
+          imgData.data.set(currentData);
+          ctx.putImageData(imgData, 0, 0);
+          updateColorUI();
+        });
+        chipWrap.appendChild(chip);
+      });
+      palettePreview.appendChild(chipWrap);
+
+      selectedColor = null;
+      previewing = false;
+      swapHistory.length = 0;
+      histList.innerHTML = '';
+      histSec.style.display = 'none';
+      updateColorUI();
+
+      loadingBar.style.width = '100%';
+      setTimeout(hideLoading, 200);
+    }, 50);
+  });
+});
+
+// ─── Canvas Click → Pick Color ──────────────────────────────────
+canvas.addEventListener('click', e => {
+  const rect = canvas.getBoundingClientRect();
+  const sx = canvas.width / rect.width;
+  const sy = canvas.height / rect.height;
+  const x = Math.floor((e.clientX - rect.left) * sx);
+  const y = Math.floor((e.clientY - rect.top) * sy);
+  const px = ctx.getImageData(x, y, 1, 1).data;
+  selectedColor = { r: px[0], g: px[1], b: px[2] };
+  previewing = false;
+  const imgData = ctx.createImageData(canvas.width, canvas.height);
+  imgData.data.set(currentData);
+  ctx.putImageData(imgData, 0, 0);
+  updateColorUI();
+});
+
+// ─── Update UI After Color Selection ────────────────────────────
+function updateColorUI() {
+  if (!selectedColor) {
+    colorInfo.innerHTML = '<p class="hint-text">' + (isArtwork ? 'Click on the image to pick a color' : 'Convert to artwork first, then pick a color') + '</p>';
+    previewBtn.style.display = 'none';
+    newColorSec.style.display = 'none';
+    applyBtn.style.display = 'none';
+    return;
+  }
+  const { r, g, b } = selectedColor;
+  colorInfo.innerHTML = `
+    <div class="color-row">
+      <div class="swatch" style="background:rgb(${r},${g},${b})"></div>
+      <span class="color-label">RGB(${r}, ${g}, ${b})</span>
+    </div>`;
+  previewBtn.style.display = 'block';
+  previewBtn.textContent = 'Preview Selection';
+  newColorSec.style.display = 'block';
+  applyBtn.style.display = 'block';
+}
+
+// ─── Tolerance Slider ───────────────────────────────────────────
+tolSlider.addEventListener('input', () => { tolValue.textContent = tolSlider.value; });
+
+// ─── Preview ────────────────────────────────────────────────────
+previewBtn.addEventListener('click', () => {
+  if (!selectedColor) return;
+  if (previewing) {
+    const imgData = ctx.createImageData(canvas.width, canvas.height);
+    imgData.data.set(currentData);
+    ctx.putImageData(imgData, 0, 0);
+    previewing = false;
+    previewBtn.textContent = 'Preview Selection';
+  } else {
+    const tol = Number(tolSlider.value);
+    const imgData = ctx.createImageData(canvas.width, canvas.height);
+    imgData.data.set(currentData);
+    const d = imgData.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const dist = colorDistance(d[i], d[i+1], d[i+2], selectedColor.r, selectedColor.g, selectedColor.b);
+      if (dist > tol) {
+        d[i]   = Math.round(d[i] * 0.2);
+        d[i+1] = Math.round(d[i+1] * 0.2);
+        d[i+2] = Math.round(d[i+2] * 0.2);
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+    previewing = true;
+    previewBtn.textContent = 'Hide Preview';
+  }
+});
+
+// ─── Color Picker ───────────────────────────────────────────────
+colorPicker.addEventListener('input', e => {
+  hexLabel.textContent = e.target.value.toUpperCase();
+  document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
+});
+
+// ─── Apply Color Swap ───────────────────────────────────────────
+applyBtn.addEventListener('click', () => {
+  if (!selectedColor) return;
+  showLoading('Swapping colors...', 20);
+
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      const tol = Number(tolSlider.value);
+      const hex = colorPicker.value;
+      const nr = parseInt(hex.slice(1,3), 16);
+      const ng = parseInt(hex.slice(3,5), 16);
+      const nb = parseInt(hex.slice(5,7), 16);
+
+      const [newH, newS] = rgbToHsl(nr, ng, nb);
+      const [origH, origS] = rgbToHsl(selectedColor.r, selectedColor.g, selectedColor.b);
+      const hueShift = newH - origH;
+      const satShift = newS - origS;
+
+      const imgData = ctx.createImageData(canvas.width, canvas.height);
+      imgData.data.set(currentData);
+      const d = imgData.data;
+
+      for (let i = 0; i < d.length; i += 4) {
+        const dist = colorDistance(d[i], d[i+1], d[i+2], selectedColor.r, selectedColor.g, selectedColor.b);
+        if (dist <= tol) {
+          const [h, s, l] = rgbToHsl(d[i], d[i+1], d[i+2]);
+          let nh = (h + hueShift) % 360;
+          if (nh < 0) nh += 360;
+          let ns = Math.max(0, Math.min(100, s + satShift));
+          const [rr, gg, bb] = hslToRgb(nh, ns, l);
+          d[i] = rr; d[i+1] = gg; d[i+2] = bb;
+        }
+      }
+
+      ctx.putImageData(imgData, 0, 0);
+      currentData = new Uint8ClampedArray(d);
+
+      const from = `rgb(${selectedColor.r},${selectedColor.g},${selectedColor.b})`;
+      swapHistory.push({ from, to: hex });
+      const item = document.createElement('div');
+      item.className = 'history-item';
+      item.innerHTML = `<div class="history-dot" style="background:${from}"></div>
+        <span class="history-arrow">&rarr;</span>
+        <div class="history-dot" style="background:${hex}"></div>`;
+      histList.appendChild(item);
+      histSec.style.display = 'block';
+
+      selectedColor = null;
+      previewing = false;
+      updateColorUI();
+      loadingBar.style.width = '100%';
+      setTimeout(hideLoading, 200);
+    }, 50);
+  });
+});
+
+// ─── Export ──────────────────────────────────────────────────────
+exportBtn.addEventListener('click', () => {
+  const link = document.createElement('a');
+  link.download = 'garment-recolored.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+});
+
+// ─── Reset ──────────────────────────────────────────────────────
+resetBtn.addEventListener('click', () => {
+  if (!originalData) return;
+  // If in artwork mode, reset to artwork version; otherwise to original
+  const resetTo = (isArtwork && artworkData) ? artworkData : originalData;
+  const imgData = ctx.createImageData(canvas.width, canvas.height);
+  imgData.data.set(resetTo);
+  ctx.putImageData(imgData, 0, 0);
+  currentData = new Uint8ClampedArray(resetTo);
+  selectedColor = null;
+  previewing = false;
+  swapHistory.length = 0;
+  histList.innerHTML = '';
+  histSec.style.display = 'none';
+  updateColorUI();
+});
+
+// ─── New Image ──────────────────────────────────────────────────
+newImgBtn.addEventListener('click', () => {
+  dropZone.style.display = 'block';
+  canvasWrap.style.display = 'none';
+  panel.classList.remove('visible');
+  originalData = null;
+  currentData = null;
+  artworkData = null;
+  isArtwork = false;
+  currentPalette = null;
+  selectedColor = null;
+  previewing = false;
+  swapHistory.length = 0;
+  histList.innerHTML = '';
+  palettePreview.innerHTML = '';
+  fileInput.value = '';
+});
 </script>
 </body>
 </html>
